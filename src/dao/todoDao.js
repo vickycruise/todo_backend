@@ -30,22 +30,19 @@ export const getTodoByUId = async ({ uid }) => {
   return result.rows;
 };
 
-export const createTodo = async ({ uid, title, description = "" }) => {
+export const createTodo = async ({ uid, title, description = "", time }) => {
   const newTodo = {
     id: uuidv4(),
     title,
     description,
     uid,
     is_completed: false, // Ensure this is a boolean, not a string
-    createdAt: new Date(),
+    time,
   };
 
-  // Log to verify the values
-  console.log("New Todo:", newTodo);
-
   const query = `
-    INSERT INTO todos (id, title, description, uid, is_completed, created_at)
-    VALUES ($1, $2, $3, $4, $5, $6)
+    INSERT INTO todos (id, title, description, uid, is_completed, created_at, updated_at, time)
+    VALUES ($1, $2, $3, $4, $5, NOW(), NOW(), $6)
     RETURNING *;
 `;
 
@@ -55,7 +52,7 @@ export const createTodo = async ({ uid, title, description = "" }) => {
     newTodo.description,
     newTodo.uid,
     newTodo.is_completed,
-    newTodo.createdAt,
+    newTodo.time,
   ];
 
   try {
@@ -77,10 +74,15 @@ export const updateTodo = (id, updates) => {
   return todo;
 };
 
-export const deleteTodo = (id) => {
-  const index = todos.findIndex((todo) => todo.id === id);
-  if (index === -1) return false;
-
-  todos.splice(index, 1);
+export const deleteTodo = async (id) => {
+  try {
+    const query = "DELETE FROM todos WHERE id = $1";
+    const result = await client.query(query, [id]);
+    console.log("deleted todo:", result.rows[0]);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error inserting todo:", error.stack);
+    throw error;
+  }
   return true;
 };

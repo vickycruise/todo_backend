@@ -58,13 +58,14 @@ export const fetchTodoByUId = async (req, res) => {
   }
 };
 
-export const addTodo = (req, res) => {
-  const { title, description, uid } = req.body;
+export const addTodo = async (req, res) => {
+  const { title, description, uid ,time} = req.body;
   if (!title) {
     return res.status(400).json({ message: "Title is required" });
   }
 
-  const newTodo = createTodo({ title, description, uid });
+  const newTodo = await createTodo({ title, description, uid,time });
+
   res.status(201).json(newTodo);
 };
 
@@ -80,10 +81,11 @@ export const modifyTodo = (req, res) => {
 };
 
 export const removeTodo = (req, res) => {
+  console.log(req.params.id, "iddd");
   const success = deleteTodo(req.params.id);
 
   if (success) {
-    res.status(204).json({ message: "successfuly removedS" });
+    res.status(200).json({ message: "successfuly removedS" });
   } else {
     res.status(404).json({ message: "To-Do item not found" });
   }

@@ -53,8 +53,8 @@ todoRoutes.get("/", (req, res) => {
     fetchAllTodos(req, res);
   }
 });
-todoRoutes.post("/", addTodo); // POST /todos
-todoRoutes.put("/:id", validateTodoId, validateTodo, modifyTodo); // PUT /todos/:id
-todoRoutes.delete("/:id", validateTodoId, removeTodo); // DELETE /todos/:id
+todoRoutes.post("/", addTodo);
+todoRoutes.put("/:id", validateTodoId, validateTodo, modifyTodo);
+todoRoutes.delete("/:id", validateTodoId, removeTodo);
 
 export default todoRoutes;
