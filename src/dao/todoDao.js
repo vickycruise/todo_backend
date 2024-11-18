@@ -19,10 +19,11 @@ export const getAllTodos = async () => {
 };
 
 export const getTodoById = async ({ id }) => {
+  console.log(id, "ids");
   const query = "SELECT * FROM todos WHERE id = $1";
   const result = await client.query(query, [id]);
-  console.log(result);
-  return result.rows;
+  // console.log(result.rows[0], "getid");
+  return result.rows[0];
 };
 export const getTodoByUId = async ({ uid }) => {
   const query = "SELECT * FROM todos WHERE uid = $1";
@@ -57,7 +58,7 @@ export const createTodo = async ({ uid, title, description = "", time }) => {
 
   try {
     const result = await client.query(query, values);
-    console.log("Inserted todo:", result.rows[0]);
+
     return result.rows[0];
   } catch (error) {
     console.error("Error inserting todo:", error.stack);
@@ -67,18 +68,37 @@ export const createTodo = async ({ uid, title, description = "", time }) => {
   return newTodo;
 };
 
-export const updateTodo = (id, updates) => {
-  const todo = getTodoById(id);
+export const updateTodo = async (updates) => {
+  const payload = JSON.parse(updates);
+  const todo = await getTodoById({ id: payload.id });
   if (!todo) return null;
-  Object.assign(todo, updates);
-  return todo;
+  const query = `
+      UPDATE todos
+      SET title = $1,
+          description = $2,
+          is_completed = $3,
+          time = $4,
+          updated_at = NOW()
+      WHERE id = $5
+      RETURNING *;
+    `;
+
+  const values = [
+    payload.title || todo.title,
+    payload.description || todo.description,
+    payload.is_completed ?? todo.is_completed,
+    payload.time || todo.time,
+    payload.id,
+  ];
+
+  const result = await client.query(query, values);
+  return result;
 };
 
 export const deleteTodo = async (id) => {
   try {
     const query = "DELETE FROM todos WHERE id = $1";
     const result = await client.query(query, [id]);
-    console.log("deleted todo:", result.rows[0]);
     return result.rows[0];
   } catch (error) {
     console.error("Error inserting todo:", error.stack);

@@ -54,7 +54,7 @@ todoRoutes.get("/", (req, res) => {
   }
 });
 todoRoutes.post("/", addTodo);
-todoRoutes.put("/:id", validateTodoId, validateTodo, modifyTodo);
+todoRoutes.put("/update", modifyTodo);
 todoRoutes.delete("/:id", validateTodoId, removeTodo);
 
 export default todoRoutes;

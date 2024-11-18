@@ -11,12 +11,11 @@ import {
 
 export const fetchAllTodos = async (req, res) => {
   const todos = await getAllTodos();
-  console.log(todos, "toDOsss");
+
   res.status(200).json(todos);
 };
 
 export const fetchTodoById = (req, res) => {
-  console.log(req.query.id, "id");
   const id = req.query.id;
   if (!id) {
     res.status(400).json({ message: "id is required" });
@@ -59,19 +58,20 @@ export const fetchTodoByUId = async (req, res) => {
 };
 
 export const addTodo = async (req, res) => {
-  const { title, description, uid ,time} = req.body;
+  const { title, description, uid, time } = req.body;
   if (!title) {
     return res.status(400).json({ message: "Title is required" });
   }
 
-  const newTodo = await createTodo({ title, description, uid,time });
+  const newTodo = await createTodo({ title, description, uid, time });
 
   res.status(201).json(newTodo);
 };
 
 export const modifyTodo = (req, res) => {
-  const updates = req.body;
-  const updatedTodo = updateTodo(req.params.id, updates);
+  const updates = req.body.data;
+  // console.log(updates.data, "updates");
+  const updatedTodo = updateTodo(updates);
 
   if (updatedTodo) {
     res.status(200).json(updatedTodo);
@@ -81,7 +81,6 @@ export const modifyTodo = (req, res) => {
 };
 
 export const removeTodo = (req, res) => {
-  console.log(req.params.id, "iddd");
   const success = deleteTodo(req.params.id);
 
   if (success) {
