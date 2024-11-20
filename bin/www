@@ -31,7 +31,7 @@ app.use("/todo", todoRoutes);
 const server = createServer(app);
 
 const io = setupSocket(server);
-cron.schedule("*/59 * * * * *", async () => {
+cron.schedule("*/30 * * * * *", async () => {
   console.log("Running cron job to check for ToDos...");
   const todos = await checkForToDos();
   if (todos.length > 0) {
