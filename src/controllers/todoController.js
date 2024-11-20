@@ -1,4 +1,3 @@
-// controllers/todoController.mjs
 import getClient from "../config/dbconfig.js";
 import {
   getAllTodos,
@@ -31,29 +30,29 @@ export const fetchTodoById = (req, res) => {
     console.error("Error fetching todo:", error);
     return res
       .status(500)
-      .json({ message: "An error occurred while fetching the To-Do item" }); // Handle server errors
+      .json({ message: "An error occurred while fetching the To-Do item" }); 
   }
 };
 export const fetchTodoByUId = async (req, res) => {
   const uid = req.query.uid;
 
   if (!uid) {
-    return res.status(400).json({ message: "UID is required" }); // Return early to prevent further execution
+    return res.status(400).json({ message: "UID is required" }); 
   }
 
   try {
-    const todo = await getTodoByUId({ uid }); // Assuming getTodoByUId is async
+    const todo = await getTodoByUId({ uid }); 
 
     if (todo) {
-      return res.status(200).json(todo); // Send the todo if found
+      return res.status(200).json(todo); 
     } else {
-      return res.status(404).json({ message: "To-Do item not found" }); // Return 404 if not found
+      return res.status(404).json({ message: "To-Do item not found" }); 
     }
   } catch (error) {
     console.error("Error fetching todo:", error);
     return res
       .status(500)
-      .json({ message: "An error occurred while fetching the To-Do item" }); // Handle server errors
+      .json({ message: "An error occurred while fetching the To-Do item" });
   }
 };
 
@@ -70,7 +69,6 @@ export const addTodo = async (req, res) => {
 
 export const modifyTodo = (req, res) => {
   const updates = req.body.data;
-  // console.log(updates.data, "updates");
   const updatedTodo = updateTodo(updates);
 
   if (updatedTodo) {
